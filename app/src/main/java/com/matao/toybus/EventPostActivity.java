@@ -23,6 +23,8 @@ public class EventPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_post);
 
         postEventBt = findViewById(R.id.post_event_bt);
-        postEventBt.setOnClickListener(v -> Bus.getDefault().post("hello"));
+        StringBuilder builder = new StringBuilder("hello");
+        postEventBt.setOnClickListener(v ->
+            new Thread(() -> Bus.getDefault().post(builder)).start());
     }
 }
