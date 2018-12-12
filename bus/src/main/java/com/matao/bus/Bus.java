@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by matao on 2018/12/12
- */
 public class Bus {
 
     private static Bus bus;
