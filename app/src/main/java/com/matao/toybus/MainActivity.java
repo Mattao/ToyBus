@@ -1,13 +1,11 @@
 package com.matao.toybus;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.matao.bus.Bus;
 import com.matao.bus.annotation.BusReceiver;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -17,14 +15,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.launch_next_bt).setOnClickListener(v -> EventPostActivity.launch(this));
-
-        Bus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Bus.getDefault().unregister(this);
     }
 
     @BusReceiver
