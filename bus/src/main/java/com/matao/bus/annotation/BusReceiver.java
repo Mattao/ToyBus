@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used for a public non-static method with one parameter and none return value
+ * Used for a public non-static method with one parameter
  *
  * <pre>
  * @BusReceiver
