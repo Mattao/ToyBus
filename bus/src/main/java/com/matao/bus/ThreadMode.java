@@ -7,6 +7,6 @@ package com.matao.bus;
  * Main - run in Android UI thread.
  * Thread - run in a new thread scheduled by thread pool.
  */
-public enum EventMode {
+public enum ThreadMode {
     Sender, Main, Thread
 }

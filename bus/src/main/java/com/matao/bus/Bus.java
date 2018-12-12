@@ -50,8 +50,8 @@ public class Bus {
                     // eventClazz is the same as or the subclass of current method parameter type
                     if (method.getParameterTypes()[0].isAssignableFrom(eventClazz)) {
                         BusSubscriber annotation = method.getAnnotation(BusSubscriber.class);
-                        EventMode eventMode = annotation.threadMode();
-                        switch (eventMode) {
+                        ThreadMode threadMode = annotation.threadMode();
+                        switch (threadMode) {
                             case Sender:
                                 Schedulers.sender().post(new Runnable() {
                                     @Override

@@ -3,7 +3,7 @@ package com.matao.toybus;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.matao.bus.EventMode;
+import com.matao.bus.ThreadMode;
 import com.matao.bus.annotation.BusSubscriber;
 
 public class MainActivity extends BaseActivity {
@@ -69,7 +69,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof Object == true
      * </pre>
      */
-    @BusSubscriber(threadMode = EventMode.Thread)
+    @BusSubscriber(threadMode = ThreadMode.Thread)
     public void onObjectEvent(Object event) {
         Log.d(TAG, "onObjectEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
     }
@@ -83,7 +83,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof StringBuilder == true
      * </pre>
      */
-    @BusSubscriber(threadMode = EventMode.Sender)
+    @BusSubscriber(threadMode = ThreadMode.Sender)
     public void onStringBuilderEvent(StringBuilder event) {
         Log.d(TAG, "onStringBuilderEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
     }

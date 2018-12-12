@@ -1,6 +1,6 @@
 package com.matao.bus.annotation;
 
-import com.matao.bus.EventMode;
+import com.matao.bus.ThreadMode;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * and run in UI thread default.
  *
  * <pre>
- * @BusReceiver(mode = EventMode.main)
+ * @BusReceiver(mode = ThreadMode.main)
  * public void onEvent(FooEvent event) {
  *     // do something...
  * }
@@ -22,5 +22,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BusSubscriber {
-    EventMode threadMode() default EventMode.Main;
+    ThreadMode threadMode() default ThreadMode.Main;
 }
