@@ -1,6 +1,7 @@
 package com.matao.bus;
 
 import com.matao.bus.annotation.BusReceiver;
+import com.matao.bus.scheduler.Schedulers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,22 +39,62 @@ public class Bus {
         methodMap.remove(target);
     }
 
-    public void post(Object event) {
+    public void post(final Object event) {
         Class<?> eventClazz = event.getClass();
         for (Map.Entry<Object, Set<Method>> entry : methodMap.entrySet()) {
-            Object target = entry.getKey();
+            final Object target = entry.getKey();
             Set<Method> methods = entry.getValue();
 
             if (methods != null) {
-                for (Method method : methods) {
+                for (final Method method : methods) {
                     // eventClazz is the same as or the subclass of current method parameter type
                     if (method.getParameterTypes()[0].isAssignableFrom(eventClazz)) {
-                        try {
-                            method.invoke(target, event);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
+                        BusReceiver annotation = method.getAnnotation(BusReceiver.class);
+                        EventMode eventMode = annotation.mode();
+                        switch (eventMode) {
+                            case Sender:
+                                Schedulers.sender().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            method.invoke(target, event);
+                                        } catch (IllegalAccessException e) {
+                                            e.printStackTrace();
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                break;
+                            case Thread:
+                                Schedulers.thread().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            method.invoke(target, event);
+                                        } catch (IllegalAccessException e) {
+                                            e.printStackTrace();
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                break;
+                            case Main:
+                                Schedulers.main().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            method.invoke(target, event);
+                                        } catch (IllegalAccessException e) {
+                                            e.printStackTrace();
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                break;
+                            default:
                         }
                     }
                 }
