@@ -2,12 +2,14 @@ package com.matao.toybus;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.matao.bus.Bus;
 import com.matao.bus.annotation.BusReceiver;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +28,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @BusReceiver
-    public void onEvent(Event event) {
-        Toast.makeText(this, "event received", Toast.LENGTH_SHORT).show();
+    public void onStringEvent(String event) {
+        // 不会执行，因为event是StringBuilder，event instanceof String == false
+        Log.d(TAG, "onStringEvent() event=" + event);
+    }
+
+    @BusReceiver
+    public void onExceptionEvent(Exception event) {
+        // 不会执行，因为event是StringBuilder，event instanceof Exception == false
+        Log.d(TAG, "onExceptionEvent() event=" + event);
+    }
+
+    @BusReceiver
+    public void onCharSequenceEvent(CharSequence event) {
+        // 会执行，因为event是StringBuilder，event instanceof CharSequence == true
+        Log.d(TAG, "onCharSequenceEvent() event=" + event);
+    }
+
+    @BusReceiver
+    public void onObjectEvent(Object event) {
+        // 会执行，因为event是StringBuilder，event instanceof Object == true
+        Log.d(TAG, "onObjectEvent() event=" + event);
     }
 }
