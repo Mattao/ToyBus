@@ -1,18 +1,19 @@
 package com.matao.bus.scheduler;
 
-import com.matao.bus.Bus;
+import android.os.Handler;
+import android.os.Looper;
 
 public class Schedulers {
 
-    public static Scheduler sender(Bus bus) {
-        return new SenderScheduler(bus);
+    public static Scheduler sender() {
+        return new SenderScheduler();
     }
 
-    public static Scheduler getMainThreadScheduler(Bus bus) {
-        return HandlerScheduler.getMainThreadScheduler(bus);
+    public static Scheduler main() {
+        return new HandlerScheduler(new Handler(Looper.getMainLooper()));
     }
 
-    public static Scheduler thread(Bus bus) {
-        return new ExecutorScheduler(bus);
+    public static Scheduler thread() {
+        return new ExecutorScheduler();
     }
 }
