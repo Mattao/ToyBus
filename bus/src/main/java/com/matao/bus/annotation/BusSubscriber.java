@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * and run in UI thread default.
  *
  * <pre>
- * @BusReceiver(mode = ThreadMode.main)
+ * @BusSubscriber(threadMode = ThreadMode.main)
  * public void onEvent(FooEvent event) {
  *     // do something...
  * }
