@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class Bus {
 
-    private Bus bus;
+    private static Bus bus;
     private Map<Object, List<Method>> methodMap = new HashMap<>();
 
-    public Bus getDefault() {
+    public static Bus getDefault() {
         if (bus == null) {
             synchronized (Bus.class) {
                 if (bus == null) {
