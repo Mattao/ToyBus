@@ -46,6 +46,7 @@ public class Bus {
 
             if (methods != null) {
                 for (Method method : methods) {
+                    // eventClazz is the same as or the subclass of current method parameter type
                     if (method.getParameterTypes()[0].isAssignableFrom(eventClazz)) {
                         try {
                             method.invoke(target, event);
