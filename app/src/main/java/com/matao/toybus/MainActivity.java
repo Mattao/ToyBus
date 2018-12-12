@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.matao.bus.EventMode;
-import com.matao.bus.annotation.BusReceiver;
+import com.matao.bus.annotation.BusSubscriber;
 
 public class MainActivity extends BaseActivity {
 
@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof String == true
      * </pre>
      */
-    @BusReceiver
+    @BusSubscriber
     public void onStringEvent(String event) {
         Log.d(TAG, "onStringEvent() event = " + event);
     }
@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof Exception == false
      * </pre>
      */
-    @BusReceiver
+    @BusSubscriber
     public void onExceptionEvent(Exception event) {
         Log.d(TAG, "onExceptionEvent() event = " + event);
     }
@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof CharSequence == true
      * </pre>
      */
-    @BusReceiver
+    @BusSubscriber
     public void onCharSequenceEvent(CharSequence event) {
         Log.d(TAG, "onCharSequenceEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
     }
@@ -69,7 +69,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof Object == true
      * </pre>
      */
-    @BusReceiver(mode = EventMode.Thread)
+    @BusSubscriber(threadMode = EventMode.Thread)
     public void onObjectEvent(Object event) {
         Log.d(TAG, "onObjectEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
     }
@@ -83,7 +83,7 @@ public class MainActivity extends BaseActivity {
      *     event instanceof StringBuilder == true
      * </pre>
      */
-    @BusReceiver(mode = EventMode.Sender)
+    @BusSubscriber(threadMode = EventMode.Sender)
     public void onStringBuilderEvent(StringBuilder event) {
         Log.d(TAG, "onStringBuilderEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
     }

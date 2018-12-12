@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used for annotating a public non-static method with one parameter.
- * This annotated method will run in the thread specified by mode
+ * This annotated method will run in the thread specified by threadMode
  * and run in UI thread default.
  *
  * <pre>
@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BusReceiver {
-    EventMode mode() default EventMode.Main;
+public @interface BusSubscriber {
+    EventMode threadMode() default EventMode.Main;
 }

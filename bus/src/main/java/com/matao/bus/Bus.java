@@ -1,6 +1,6 @@
 package com.matao.bus;
 
-import com.matao.bus.annotation.BusReceiver;
+import com.matao.bus.annotation.BusSubscriber;
 import com.matao.bus.scheduler.Schedulers;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +29,7 @@ public class Bus {
     }
 
     public void register(Object target) {
-        Set<Method> methods = Utils.findAnnotatedMethods(target.getClass(), BusReceiver.class);
+        Set<Method> methods = Utils.findAnnotatedMethods(target.getClass(), BusSubscriber.class);
 
         if (methods == null || methods.isEmpty()) return;
         methodMap.put(target, methods);
@@ -49,8 +49,8 @@ public class Bus {
                 for (final Method method : methods) {
                     // eventClazz is the same as or the subclass of current method parameter type
                     if (method.getParameterTypes()[0].isAssignableFrom(eventClazz)) {
-                        BusReceiver annotation = method.getAnnotation(BusReceiver.class);
-                        EventMode eventMode = annotation.mode();
+                        BusSubscriber annotation = method.getAnnotation(BusSubscriber.class);
+                        EventMode eventMode = annotation.threadMode();
                         switch (eventMode) {
                             case Sender:
                                 Schedulers.sender().post(new Runnable() {
