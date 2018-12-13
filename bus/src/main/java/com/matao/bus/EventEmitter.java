@@ -11,7 +11,7 @@ public class EventEmitter implements Runnable{
     public EventEmitter(Subscriber subscriber, Object event) {
         this.subscriber = subscriber;
         this.event = event;
-        this.threadMode = subscriber.getMethodInfo().threadMode;
+        this.threadMode = subscriber.methodInfo.threadMode;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.matao.bus.method;
+package com.matao.bus.model;
 
 import com.matao.bus.ThreadMode;
 
@@ -15,16 +15,12 @@ import java.lang.reflect.Method;
  */
 public class MethodInfo {
     public final Method method;
-    public final Class<?> targetType;
     public final Class<?> eventType;
     public final ThreadMode threadMode;
-    public final String name;
 
-    public MethodInfo(Method method, Class<?> targetType, ThreadMode threadMode) {
+    public MethodInfo(Method method, ThreadMode threadMode) {
         this.method = method;
-        this.targetType = targetType;
         this.eventType = method.getParameterTypes()[0];
         this.threadMode = threadMode;
-        this.name = String.format("%s.%s(%s)", targetType.getName(), method.getName(), eventType.getName());
     }
 }

@@ -1,31 +1,33 @@
-package com.matao.bus.method;
+package com.matao.bus;
 
 import android.support.annotation.Nullable;
 
 import com.matao.bus.annotation.BusSubscriber;
 import com.matao.bus.exception.BusException;
+import com.matao.bus.model.MethodInfo;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MethodUtils {
+public class Utils {
 
-    public static Set<MethodInfo> findSubscriberMethodsByAnnotation(final Class<?> targetType) {
-        Set<MethodInfo> methodInfoSet = new HashSet<>();
-        Class<?> clazz = targetType;
+    public static Set<Subscriber> findSubscribersByAnnotation(final Object target) {
+        Set<Subscriber> subscriberSet = new HashSet<>();
+        Class<?> clazz = target.getClass();
         while (!shouldSkipClass(clazz)) {
             for (Method method : clazz.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(BusSubscriber.class) && isValidMethod(method)) {
                     BusSubscriber busSubscriber = method.getAnnotation(BusSubscriber.class);
-                    MethodInfo methodInfo = new MethodInfo(method, targetType, busSubscriber.threadMode());
-                    methodInfoSet.add(methodInfo);
+                    MethodInfo methodInfo = new MethodInfo(method, busSubscriber.threadMode());
+                    Subscriber subscriber = new Subscriber(target, methodInfo);
+                    subscriberSet.add(subscriber);
                 }
             }
             clazz = clazz.getSuperclass();
         }
-        return methodInfoSet;
+        return subscriberSet;
     }
 
     // skip Object class, JDK class and Android class

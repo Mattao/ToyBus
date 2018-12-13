@@ -1,12 +1,10 @@
 package com.matao.bus;
 
-import com.matao.bus.method.MethodInfo;
-import com.matao.bus.method.MethodUtils;
+import com.matao.bus.model.MethodInfo;
 import com.matao.bus.scheduler.Scheduler;
 import com.matao.bus.scheduler.Schedulers;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,13 +34,9 @@ public class Bus {
     }
 
     public void register(Object target) {
-        Set<Subscriber> subscriberSet = new HashSet<>();
-        for (MethodInfo methodInfo : MethodUtils.findSubscriberMethodsByAnnotation(target.getClass())) {
-            Subscriber subscriber = new Subscriber(methodInfo, target);
-            subscriberSet.add(subscriber);
-        }
+        Set<Subscriber> subscriberSet = Utils.findSubscribersByAnnotation(target);
 
-        if (subscriberSet.isEmpty()) return;
+        if (subscriberSet == null || subscriberSet.isEmpty()) return;
         subscriberMap.put(target, subscriberSet);
     }
 
@@ -54,7 +48,7 @@ public class Bus {
         Class<?> eventType = event.getClass();
         for (Set<Subscriber> subscriberSet : subscriberMap.values()) {
             for (final Subscriber subscriber : subscriberSet) {
-                final MethodInfo methodInfo = subscriber.getMethodInfo();
+                final MethodInfo methodInfo = subscriber.methodInfo;
                 if (methodInfo.eventType.isAssignableFrom(eventType)) {
                     sendEvent(new EventEmitter(subscriber, event));
                 }
