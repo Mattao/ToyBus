@@ -1,12 +1,13 @@
 package com.matao.bus;
 
-import com.matao.bus.model.MethodInfo;
+import com.matao.bus.model.SubscriberMethod;
 import com.matao.bus.scheduler.Scheduler;
 import com.matao.bus.scheduler.Schedulers;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Bus {
 
@@ -14,7 +15,7 @@ public class Bus {
     private Scheduler threadScheduler;
     private Scheduler mainScheduler;
     private Scheduler senderScheduler;
-    private Map<Object, Set<Subscriber>> subscriberMap = new HashMap<>();
+    private List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
 
     private Bus() {
         threadScheduler = Schedulers.thread();
@@ -33,25 +34,36 @@ public class Bus {
         return bus;
     }
 
-    public void register(Object target) {
-        Set<Subscriber> subscriberSet = Utils.findSubscribersByAnnotation(target);
+    public void register(Object subscriber) {
+        Set<SubscriberMethod> SubscriberMethods = Utils.findSubscriberMethods(subscriber);
+        if (SubscriberMethods == null || SubscriberMethods.isEmpty()) return;
 
-        if (subscriberSet == null || subscriberSet.isEmpty()) return;
-        subscriberMap.put(target, subscriberSet);
+        for (SubscriberMethod subscriberMethod : SubscriberMethods) {
+            subscribe(subscriber, subscriberMethod);
+        }
     }
 
-    public void unregister(Object target) {
-        subscriberMap.remove(target);
+    private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
+        Subscription subscription = new Subscription(subscriber, subscriberMethod);
+        subscriptions.add(subscription);
+    }
+
+    public void unregister(Object subscriber) {
+        Iterator<Subscription> iterator = subscriptions.iterator();
+        while (iterator.hasNext()) {
+            Subscription subscription = iterator.next();
+            if (subscription.subscriber == subscriber) {
+                iterator.remove();
+            }
+        }
     }
 
     public void post(final Object event) {
         Class<?> eventType = event.getClass();
-        for (Set<Subscriber> subscriberSet : subscriberMap.values()) {
-            for (final Subscriber subscriber : subscriberSet) {
-                final MethodInfo methodInfo = subscriber.methodInfo;
-                if (methodInfo.eventType.isAssignableFrom(eventType)) {
-                    sendEvent(new EventEmitter(subscriber, event));
-                }
+        for (Subscription subscription : subscriptions) {
+            SubscriberMethod subscriberMethod = subscription.subscriberMethod;
+            if (subscriberMethod.eventType.isAssignableFrom(eventType)) {
+                sendEvent(new EventEmitter(subscription, event));
             }
         }
     }

@@ -4,20 +4,20 @@ import java.lang.reflect.InvocationTargetException;
 
 public class EventEmitter implements Runnable{
 
-    public final Subscriber subscriber;
+    public final Subscription subscription;
     public final Object event;
     public final ThreadMode threadMode;
 
-    public EventEmitter(Subscriber subscriber, Object event) {
-        this.subscriber = subscriber;
+    public EventEmitter(Subscription subscription, Object event) {
+        this.subscription = subscription;
         this.event = event;
-        this.threadMode = subscriber.methodInfo.threadMode;
+        this.threadMode = subscription.subscriberMethod.threadMode;
     }
 
     @Override
     public void run() {
         try {
-            subscriber.invoke(event);
+            subscription.invoke(event);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

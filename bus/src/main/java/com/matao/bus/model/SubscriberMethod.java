@@ -13,12 +13,12 @@ import java.lang.reflect.Method;
  * }
  * </pre>
  */
-public class MethodInfo {
+public class SubscriberMethod {
     public final Method method;
     public final Class<?> eventType;
     public final ThreadMode threadMode;
 
-    public MethodInfo(Method method, ThreadMode threadMode) {
+    public SubscriberMethod(Method method, ThreadMode threadMode) {
         this.method = method;
         this.eventType = method.getParameterTypes()[0];
         this.threadMode = threadMode;
