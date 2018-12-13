@@ -6,13 +6,14 @@ import com.matao.bus.scheduler.Schedulers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class Bus {
 
     private static Bus bus;
-    private Map<Object, Set<MethodInfo>> methodInfoMap = new HashMap<>();
+    private Map<Object, Set<Subscriber>> subscriberMap = new HashMap<>();
 
     public static Bus getDefault() {
         if (bus == null) {
@@ -26,25 +27,25 @@ public class Bus {
     }
 
     public void register(Object target) {
-        Set<MethodInfo> methods = MethodUtils.findSubscriberMethodsByAnnotation(target.getClass());
+        Set<Subscriber> subscriberSet = new HashSet<>();
+        for (MethodInfo methodInfo : MethodUtils.findSubscriberMethodsByAnnotation(target.getClass())) {
+            Subscriber subscriber = new Subscriber(methodInfo, target);
+            subscriberSet.add(subscriber);
+        }
 
-        if (methods == null || methods.isEmpty()) return;
-        methodInfoMap.put(target, methods);
+        if (subscriberMap == null || subscriberMap.isEmpty()) return;
+        subscriberMap.put(target, subscriberSet);
     }
 
     public void unregister(Object target) {
-        methodInfoMap.remove(target);
+        subscriberMap.remove(target);
     }
 
     public void post(final Object event) {
         Class<?> eventType = event.getClass();
-        for (Map.Entry<Object, Set<MethodInfo>> entry : methodInfoMap.entrySet()) {
-            final Object target = entry.getKey();
-            Set<MethodInfo> methodInfoSet = entry.getValue();
-
-            if (methodInfoSet == null) return;
-
-            for (final MethodInfo methodInfo : methodInfoSet) {
+        for (Set<Subscriber> subscriberSet : subscriberMap.values()) {
+            for (final Subscriber subscriber : subscriberSet) {
+                final MethodInfo methodInfo = subscriber.getMethodInfo();
                 if (methodInfo.eventType.isAssignableFrom(eventType)) {
                     switch (methodInfo.threadMode) {
                         case Sender:
@@ -52,7 +53,7 @@ public class Bus {
                                 @Override
                                 public void run() {
                                     try {
-                                        methodInfo.method.invoke(target, event);
+                                        subscriber.invoke(event);
                                     } catch (IllegalAccessException e) {
                                         e.printStackTrace();
                                     } catch (InvocationTargetException e) {
@@ -66,7 +67,7 @@ public class Bus {
                                 @Override
                                 public void run() {
                                     try {
-                                        methodInfo.method.invoke(target, event);
+                                        subscriber.invoke(event);
                                     } catch (IllegalAccessException e) {
                                         e.printStackTrace();
                                     } catch (InvocationTargetException e) {
@@ -80,7 +81,7 @@ public class Bus {
                                 @Override
                                 public void run() {
                                     try {
-                                        methodInfo.method.invoke(target, event);
+                                        subscriber.invoke(event);
                                     } catch (IllegalAccessException e) {
                                         e.printStackTrace();
                                     } catch (InvocationTargetException e) {
