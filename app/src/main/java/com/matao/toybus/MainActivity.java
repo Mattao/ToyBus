@@ -47,6 +47,14 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
+     * This method will not be invoked,
+     * since there is no @BusSubscriber annotation
+     */
+    public void onNoAnnotationEvent(StringBuilder event) {
+        Log.d(TAG, "onNoAnnotationEvent() event = " + event);
+    }
+
+    /**
      * This method will be invoked in the default main thread.
      * <p>
      * Since event is an instance of StringBuilder,
@@ -87,4 +95,12 @@ public class MainActivity extends BaseActivity {
     public void onStringBuilderEvent(StringBuilder event) {
         Log.d(TAG, "onStringBuilderEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
     }
+
+    /**
+     * this will cause exception
+     */
+//    @BusSubscriber(threadMode = ThreadMode.Sender)
+//    void onNonPublicEvent(StringBuilder event) {
+//        Log.d(TAG, "onStringBuilderEvent() event = " + event + ", thread: " + Thread.currentThread().getName());
+//    }
 }
